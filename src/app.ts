@@ -1,14 +1,16 @@
 import express from "express";
-import type { Request, Response } from "express";
+import { authRoutes } from "./routes";
+import { errorHandler } from "./shared/middlewares/errorHandler.middleware";
 
 const app = express();
 
 // Middlewares
 app.use(express.json());
 
-// Example route
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello from Express + TypeScript!");
-});
+// mount routes
+app.use("/api/auth", authRoutes);
+
+// error handler
+app.use(errorHandler);
 
 export default app;
