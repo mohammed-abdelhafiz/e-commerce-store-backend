@@ -1,6 +1,6 @@
 export type Role = "customer" | "admin";
 
 export type ReqUser = {
-  id: string;
+  userId: string;
   role: Role;
 };

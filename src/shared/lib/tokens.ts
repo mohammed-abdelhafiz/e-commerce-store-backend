@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import redisClient from "./redis";
 import { Response } from "express";
+import { ReqUser } from "../types";
 
 export const generateTokens = (userId: string, role: "customer" | "admin") => {
   const accessToken = jwt.sign(
@@ -10,18 +11,22 @@ export const generateTokens = (userId: string, role: "customer" | "admin") => {
       expiresIn: "15m",
     }
   );
-  const refreshToken = jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET!, {
-    expiresIn: "7d",
-  });
+  const refreshToken = jwt.sign(
+    { userId, role },
+    process.env.JWT_REFRESH_SECRET!,
+    {
+      expiresIn: "7d",
+    }
+  );
   return { accessToken, refreshToken };
 };
 
 export const verifyAccessToken = (token: string) => {
-  return jwt.verify(token, process.env.JWT_ACCESS_SECRET!);
+  return jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as ReqUser;
 };
 
 export const verifyRefreshToken = (token: string) => {
-  return jwt.verify(token, process.env.JWT_REFRESH_SECRET!);
+  return jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as ReqUser;
 };
 
 export const storeRefreshTokenInRedis = async (
@@ -29,7 +34,7 @@ export const storeRefreshTokenInRedis = async (
   refreshToken: string
 ) => {
   await redisClient.set(
-    `refresh:${userId}`,
+    `refresh_token:${userId}`,
     refreshToken,
     "EX",
     60 * 60 * 24 * 7 // 7 days
@@ -37,7 +42,7 @@ export const storeRefreshTokenInRedis = async (
 };
 
 export const getRefreshTokenFromRedis = async (userId: string) => {
-  return await redisClient.get(`refresh:${userId}`);
+  return await redisClient.get(`refresh_token:${userId}`);
 };
 
 export const setTokensInCookies = (

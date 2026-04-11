@@ -5,6 +5,7 @@ import {
   clearTokensCookies,
   setTokensInCookies,
 } from "../../shared/lib/tokens";
+import { AppError } from "../../shared/lib/utils";
 
 export const register = async (req: Request, res: Response) => {
   const parsedBody = registerSchema.parse(req.body);
@@ -29,9 +30,35 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    throw new AppError("No refresh token found", 401);
+  }
   await authService.logout(req.user!);
   clearTokensCookies(res);
   res.status(200).json({
     message: "User logged out successfully",
+  });
+};
+
+export const refreshToken = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    throw new AppError("No refresh token provided", 401);
+  }
+  const { newAccessToken, newRefreshToken } =
+    await authService.refresh(refreshToken);
+  setTokensInCookies(res, newAccessToken, newRefreshToken);
+  res.status(200).json({
+    message: "Tokens refreshed successfully",
+  });
+};
+
+export const getMe = async (req: Request, res: Response) => {
+  const { userId } = req.user!;
+  const user = await authService.getMe(userId);
+  res.status(200).json({
+    message: "User fetched successfully",
+    user,
   });
 };

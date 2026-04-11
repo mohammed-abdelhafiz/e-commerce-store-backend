@@ -4,6 +4,7 @@ import { AppError } from "../../shared/lib/utils";
 import {
   generateTokens,
   storeRefreshTokenInRedis,
+  verifyRefreshToken,
 } from "../../shared/lib/tokens";
 import { ReqUser, Role } from "../../shared/types";
 import redisClient from "../../shared/lib/redis";
@@ -30,12 +31,12 @@ export const login = async (body: LoginDto) => {
 
   const user = await User.findOne({ email });
   if (!user) {
-    throw new AppError("User not found", 404);
+    throw new AppError("Invalid credentials", 401);
   }
 
   const isPasswordValid = await user.comparePassword(password);
   if (!isPasswordValid) {
-    throw new AppError("Invalid password", 401);
+    throw new AppError("Invalid credentials", 401);
   }
   const { accessToken, refreshToken } = generateTokens(
     user._id.toString(),
@@ -46,5 +47,24 @@ export const login = async (body: LoginDto) => {
 };
 
 export const logout = async (user: ReqUser) => {
-  await redisClient.del(`refresh:${user.id}`);
+  await redisClient.del(`refresh_token:${user.userId}`);
+};
+
+export const refresh = async (oldRefreshToken: string) => {
+  const { userId, role } = verifyRefreshToken(oldRefreshToken);
+  const storedRefreshToken = await redisClient.get(`refresh_token:${userId}`);
+  if (!storedRefreshToken || storedRefreshToken !== oldRefreshToken) {
+    throw new AppError("Invalid refresh token", 401);
+  }
+  const { accessToken, refreshToken } = generateTokens(userId, role);
+  await storeRefreshTokenInRedis(userId, refreshToken);
+  return { newAccessToken: accessToken, newRefreshToken: refreshToken };
+};
+
+export const getMe = async (userId: string) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+  return user;
 };
