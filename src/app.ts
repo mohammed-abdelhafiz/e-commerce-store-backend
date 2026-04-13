@@ -5,6 +5,7 @@ import {
   cartRoutes,
   couponRoutes,
   paymentRoutes,
+  analyticsRoutes,
 } from "./routes";
 import { errorHandler } from "./shared/middlewares/errorHandler";
 import cookieParser from "cookie-parser";
@@ -22,6 +23,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 //not found
 app.use(notFoundHandler);
