@@ -1,5 +1,5 @@
 import express from "express";
-import { authRoutes, productRoutes, cartRoutes } from "./routes";
+import { authRoutes, productRoutes, cartRoutes, couponRoutes } from "./routes";
 import { errorHandler } from "./shared/middlewares/errorHandler";
 import cookieParser from "cookie-parser";
 import { notFoundHandler } from "./shared/middlewares/notFoundHandler";
@@ -14,6 +14,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/coupons", couponRoutes);
 
 //not found
 app.use(notFoundHandler);
