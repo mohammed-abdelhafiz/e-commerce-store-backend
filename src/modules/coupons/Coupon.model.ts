@@ -1,6 +1,14 @@
-import { Schema, model } from "mongoose";
+import { Document, Schema, Types, model } from "mongoose";
 
-const couponSchema = new Schema({
+interface CouponDocument extends Document {
+    code: string;
+    discountPercentage: number;
+    expiresAt: Date;
+    isActive: boolean;
+    user: Types.ObjectId;
+}
+
+const couponSchema = new Schema<CouponDocument>({
     code: {
         type: String,
         required: true,
@@ -16,9 +24,9 @@ const couponSchema = new Schema({
         type: Date,
         required: true,
     },
-    used: {
+    isActive: {
         type: Boolean,
-        default: false,
+        default: true,
     },
     user: {
         type: Schema.Types.ObjectId,
@@ -29,6 +37,6 @@ const couponSchema = new Schema({
     
 }, { timestamps: true });
 
-const Coupon = model("Coupon", couponSchema);
+const Coupon = model<CouponDocument>("Coupon", couponSchema);
 
 export default Coupon;

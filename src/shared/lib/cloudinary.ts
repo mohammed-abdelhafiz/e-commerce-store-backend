@@ -2,7 +2,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { Readable } from "stream";
 import multer from "multer";
 import { UploadApiResponse } from "cloudinary";
-import { AppError } from "./utils";
+import { AppError } from "./AppErrorClass";
 
 // multer configuration
 const storage = multer.memoryStorage();

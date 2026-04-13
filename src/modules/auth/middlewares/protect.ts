@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError } from "../../../shared/lib/utils";
-import { verifyAccessToken } from "../../../shared/lib/tokens";
+import { AppError } from "../../../shared/lib/AppErrorClass";
+import { verifyAccessToken } from "../../../shared/lib/tokenUtils";
 import User from "../User.model";
 
 export const protect = async (

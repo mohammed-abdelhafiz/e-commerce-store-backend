@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import * as productsService from "./products.service";
 import mongoose from "mongoose";
-import { AppError } from "../../shared/lib/utils";
+import { AppError } from "../../shared/lib/AppErrorClass";
 import { createProductSchema, updateProductSchema } from "./types/products.dto";
 import {
   uploadToCloudinary,

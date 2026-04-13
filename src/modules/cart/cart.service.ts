@@ -1,4 +1,4 @@
-import { AppError } from "../../shared/lib/utils";
+import { AppError } from "../../shared/lib/AppErrorClass";
 import Cart from "./Cart.model";
 import { Types } from "mongoose";
 

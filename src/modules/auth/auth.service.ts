@@ -1,11 +1,11 @@
 import User from "./User.model";
 import type { LoginDto, RegisterDto } from "./types/auth.dto";
-import { AppError } from "../../shared/lib/utils";
+import { AppError } from "../../shared/lib/AppErrorClass";
 import {
   generateTokens,
   storeRefreshTokenInRedis,
   verifyRefreshToken,
-} from "../../shared/lib/tokens";
+} from "../../shared/lib/tokenUtils";
 import { Role } from "../../shared/types";
 import redisClient from "../../shared/lib/redis";
 

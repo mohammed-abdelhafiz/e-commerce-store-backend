@@ -1,5 +1,5 @@
 import redisClient from "../../shared/lib/redis";
-import { AppError } from "../../shared/lib/utils";
+import { AppError } from "../../shared/lib/AppErrorClass";
 import Product, { ProductDocument, ProductImage } from "./Product.model";
 import { CreateProductDto, UpdateProductDto } from "./types/products.dto";
 

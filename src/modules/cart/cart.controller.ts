@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { AppError } from "../../shared/lib/utils";
+import { AppError } from "../../shared/lib/AppErrorClass";
 import { isValidObjectId, Types } from "mongoose";
 import * as cartService from "./cart.service";
 
@@ -56,7 +56,11 @@ export const updateProductQuantity = async (req: Request, res: Response) => {
     throw new AppError("Invalid quantity", 400);
   }
 
-  const cart = await cartService.updateProductQuantity(user._id, productId, quantity);
+  const cart = await cartService.updateProductQuantity(
+    user._id,
+    productId,
+    quantity
+  );
 
   res.status(200).json({ message: "Cart updated", cart });
 };

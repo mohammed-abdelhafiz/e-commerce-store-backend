@@ -4,8 +4,8 @@ import * as authService from "./auth.service";
 import {
   clearTokensCookies,
   setTokensInCookies,
-} from "../../shared/lib/tokens";
-import { AppError } from "../../shared/lib/utils";
+} from "../../shared/lib/tokenUtils";
+import { AppError } from "../../shared/lib/AppErrorClass";
 
 export const register = async (req: Request, res: Response) => {
   const parsedBody = registerSchema.parse(req.body);
