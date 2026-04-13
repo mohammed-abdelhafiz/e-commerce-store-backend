@@ -1,6 +1,6 @@
 import redisClient from "../../shared/lib/redis";
 import { AppError } from "../../shared/lib/utils";
-import Product, { ProductDocument, ProductImage } from "./models/Product.model";
+import Product, { ProductDocument, ProductImage } from "./Product.model";
 import { CreateProductDto, UpdateProductDto } from "./types/products.dto";
 
 export const getAllProducts = async (page: number, limit: number) => {

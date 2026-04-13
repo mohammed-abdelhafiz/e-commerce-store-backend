@@ -1,15 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
-interface UserDocument extends Document {
+export interface UserDocument extends Document {
   // fields
   name: string;
   email: string;
   password: string;
-  cart: {
-    product: mongoose.Schema.Types.ObjectId;
-    quantity: number;
-  }[];
   role: string;
   // methods
   comparePassword(password: string): Promise<boolean>;
@@ -36,19 +32,6 @@ const userSchema = new mongoose.Schema<UserDocument>(
       trim: true,
       min: 6,
     },
-    cart: [
-      {
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          default: 1,
-        },
-      },
-    ],
     role: {
       type: String,
       enum: ["customer", "admin"],

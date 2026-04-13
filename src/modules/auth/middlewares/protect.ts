@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../../../shared/lib/utils";
-import { ReqUser } from "../../../shared/types";
 import { verifyAccessToken } from "../../../shared/lib/tokens";
+import User from "../User.model";
 
 export const protect = async (
   req: Request,
@@ -14,6 +14,10 @@ export const protect = async (
   }
 
   const decodedToken = verifyAccessToken(accessToken);
-  req.user = decodedToken as ReqUser;
+  const user = await User.findById(decodedToken.userId);
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+  req.user = user;
   next();
 };

@@ -1,4 +1,4 @@
-import User from "./models/User.model";
+import User from "./User.model";
 import type { LoginDto, RegisterDto } from "./types/auth.dto";
 import { AppError } from "../../shared/lib/utils";
 import {
@@ -6,7 +6,7 @@ import {
   storeRefreshTokenInRedis,
   verifyRefreshToken,
 } from "../../shared/lib/tokens";
-import { ReqUser, Role } from "../../shared/types";
+import { Role } from "../../shared/types";
 import redisClient from "../../shared/lib/redis";
 
 export const register = async (body: RegisterDto) => {
@@ -46,8 +46,8 @@ export const login = async (body: LoginDto) => {
   return { user, accessToken, refreshToken };
 };
 
-export const logout = async (user: ReqUser) => {
-  await redisClient.del(`refresh_token:${user.userId}`);
+export const logout = async (userId: string) => {
+  await redisClient.del(`refresh_token:${userId}`);
 };
 
 export const refresh = async (oldRefreshToken: string) => {

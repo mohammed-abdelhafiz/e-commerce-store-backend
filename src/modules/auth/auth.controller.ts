@@ -34,7 +34,7 @@ export const logout = async (req: Request, res: Response) => {
   if (!refreshToken) {
     throw new AppError("No refresh token found", 401);
   }
-  await authService.logout(req.user!);
+  await authService.logout(req.user!._id.toString());
   clearTokensCookies(res);
   res.status(200).json({
     message: "User logged out successfully",
@@ -55,7 +55,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 };
 
 export const getMe = async (req: Request, res: Response) => {
-  const { userId } = req.user!;
+  const userId = req.user!._id.toString();
   const user = await authService.getMe(userId);
   res.status(200).json({
     message: "User fetched successfully",

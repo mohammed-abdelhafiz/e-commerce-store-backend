@@ -1,9 +1,14 @@
 import jwt from "jsonwebtoken";
 import redisClient from "./redis";
 import { Response } from "express";
-import { ReqUser } from "../types";
+import { Role } from "../types";
 
-export const generateTokens = (userId: string, role: "customer" | "admin") => {
+export interface JwtPayload {
+  userId: string;
+  role: Role;
+}
+
+export const generateTokens = (userId: string, role: Role) => {
   const accessToken = jwt.sign(
     { userId, role },
     process.env.JWT_ACCESS_SECRET!,
@@ -22,11 +27,11 @@ export const generateTokens = (userId: string, role: "customer" | "admin") => {
 };
 
 export const verifyAccessToken = (token: string) => {
-  return jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as ReqUser;
+  return jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as unknown as JwtPayload;
 };
 
 export const verifyRefreshToken = (token: string) => {
-  return jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as ReqUser;
+  return jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as unknown as JwtPayload;
 };
 
 export const storeRefreshTokenInRedis = async (
