@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AppError } from "../../shared/lib/utils";
-import Cart from "./Cart.model";
-import { isValidObjectId } from "mongoose";
+import { isValidObjectId, Types } from "mongoose";
+import * as cartService from "./cart.service";
 
 export const addToCart = async (req: Request, res: Response) => {
   const productId = req.body?.productId;
@@ -16,66 +16,36 @@ export const addToCart = async (req: Request, res: Response) => {
     throw new AppError("User is not authenticated", 401);
   }
 
-  const cart = await Cart.findOne({ user: user._id });
-  if (!cart) {
-    const newCart = await Cart.create({
-      user: user._id,
-      items: [{ product: productId, quantity: 1 }],
-    });
-    return res
-      .status(201)
-      .json({ message: "Product added to cart", cart: newCart });
-  }
-
-  const existingItem = cart.items.find(
-    (item) => item.product.toString() === productId
-  );
-  if (existingItem) {
-    existingItem.quantity += 1;
-  } else {
-    cart.items.push({ product: productId, quantity: 1 });
-  }
-
-  await cart.save();
+  const cart = await cartService.addToCart(user._id, productId);
   res.status(200).json({ message: "Product added to cart", cart });
 };
 
 export const getCart = async (req: Request, res: Response) => {
   const user = req.user!;
-  const cart = await Cart.findOne({ user: user._id }).populate("items.product");
-
-  if (!cart) {
-    return res.status(200).json({ items: [] });
-  }
-
+  const cart = await cartService.getCart(user._id);
   res.status(200).json(cart);
 };
 
 export const clearCart = async (req: Request, res: Response) => {
   const user = req.user!;
-  await Cart.findOneAndDelete({ user: user._id });
+  await cartService.clearCart(user._id);
   res.status(200).json({ message: "Cart cleared successfully" });
 };
 
 export const removeProductFromCart = async (req: Request, res: Response) => {
-  const { productId } = req.params;
+  const productId = req.params.productId as unknown as Types.ObjectId;
   const user = req.user!;
 
-  const cart = await Cart.findOne({ user: user._id });
-  if (!cart) {
-    throw new AppError("Cart not found", 404);
+  if (!isValidObjectId(productId)) {
+    throw new AppError("Invalid product ID", 400);
   }
 
-  cart.items = cart.items.filter(
-    (item) => item.product.toString() !== productId
-  );
-
-  await cart.save();
+  const cart = await cartService.removeProductFromCart(user._id, productId);
   res.status(200).json({ message: "Product removed from cart", cart });
 };
 
 export const updateProductQuantity = async (req: Request, res: Response) => {
-  const productId = req.params.productId;
+  const productId = req.params.productId as unknown as Types.ObjectId;
   const quantity = req.body?.quantity;
   const user = req.user!;
 
@@ -86,27 +56,7 @@ export const updateProductQuantity = async (req: Request, res: Response) => {
     throw new AppError("Invalid quantity", 400);
   }
 
-  const cart = await Cart.findOne({ user: user._id });
-  if (!cart) {
-    throw new AppError("Cart not found", 404);
-  }
-
-  const existingItem = cart.items.find(
-    (item) => item.product.toString() === productId
-  );
-
-  if (!existingItem) {
-    throw new AppError("Product not found in cart", 404);
-  }
-
-  if (quantity === 0) {
-    cart.items = cart.items.filter(
-      (item) => item.product.toString() !== productId
-    );
-  } else {
-    existingItem.quantity = quantity;
-  }
-  await cart.save();
+  const cart = await cartService.updateProductQuantity(user._id, productId, quantity);
 
   res.status(200).json({ message: "Cart updated", cart });
 };

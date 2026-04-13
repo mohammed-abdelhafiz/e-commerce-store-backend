@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import type { Document } from "mongoose";
 
 interface CartItem {
-  product: mongoose.Schema.Types.ObjectId;
+  product: mongoose.Types.ObjectId;
   quantity: number;
 }
 
