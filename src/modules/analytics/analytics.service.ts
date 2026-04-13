@@ -21,7 +21,7 @@ export const getAnalytics = async () => {
 
   const endDate = new Date();
   const startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000); // Last 7 days
-  const [recentSalesData] = await Order.aggregate([
+  const recentSalesData = await Order.aggregate([
     {
       $match: {
         createdAt: { $gte: startDate, $lte: endDate },
@@ -40,7 +40,6 @@ export const getAnalytics = async () => {
       },
     },
   ]);
-
   return {
     totalUsers,
     totalProducts,
