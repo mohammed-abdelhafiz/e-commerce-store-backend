@@ -1,5 +1,5 @@
 import express from "express";
-import { authRoutes } from "./routes";
+import { authRoutes, productRoutes } from "./routes";
 import { errorHandler } from "./shared/middlewares/errorHandler";
 import cookieParser from "cookie-parser";
 import { notFoundHandler } from "./shared/middlewares/notFoundHandler";
@@ -12,6 +12,7 @@ app.use(cookieParser());
 
 // mount routes
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
 
 //not found
 app.use(notFoundHandler);

@@ -3,12 +3,14 @@ import { AppError } from "../lib/utils";
 import { flattenError, ZodError } from "zod";
 
 export const errorHandler = (
-  err: Error,
+  err: any,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  console.log(err);
+  console.error("Error path:", req.path);
+  console.error("Error details:", err);
+
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
       message: err.message,
@@ -16,10 +18,20 @@ export const errorHandler = (
   }
 
   if (err instanceof ZodError) {
-    return res.status(400).json(flattenError(err));
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: flattenError(err),
+    });
   }
 
-  res.status(500).json({
-    message: "Something went wrong",
+  // Handle Multer errors explicitly if needed
+  if (err.code === "LIMIT_UNEXPECTED_FILE") {
+    return res.status(400).json({
+      message: "Too many files uploaded or unexpected field name",
+    });
+  }
+
+  res.status(err.status || err.statusCode || 500).json({
+    message: err.message || "Something went wrong",
   });
 };

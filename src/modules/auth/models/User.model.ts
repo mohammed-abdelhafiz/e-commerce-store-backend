@@ -19,22 +19,22 @@ const userSchema = new mongoose.Schema<UserDocument>(
   {
     name: {
       type: String,
-      required: [true, "Name is required"],
+      required: true,
       trim: true,
-      min: [3, "Name must be at least 3 characters long"],
-      max: [30, "Name must be at most 30 characters long"],
+      min: 3,
+      max: 30,
     },
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: true,
       trim: true,
-      unique: [true, "Email already exists"],
+      unique: true,
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: true,
       trim: true,
-      min: [6, "Password must be at least 6 characters long"],
+      min: 6,
     },
     cart: [
       {
