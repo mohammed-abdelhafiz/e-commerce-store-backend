@@ -14,7 +14,7 @@ export const register = async (body: RegisterDto) => {
 
   const userExists = await User.findOne({ email });
   if (userExists) {
-    throw new AppError("User already exists", 400);
+    throw new AppError("You already have an account, try to login", 400);
   }
 
   const user = await User.create({ name, email, password });
@@ -59,6 +59,15 @@ export const refresh = async (oldRefreshToken: string) => {
   const { accessToken, refreshToken } = generateTokens(userId, role);
   await storeRefreshTokenInRedis(userId, refreshToken);
   return { newAccessToken: accessToken, newRefreshToken: refreshToken };
+};
+
+export const getSession = async (refreshToken: string) => {
+  const { userId, role } = verifyRefreshToken(refreshToken);
+  const storedRefreshToken = await redisClient.get(`refresh_token:${userId}`);
+  if (!storedRefreshToken || storedRefreshToken !== refreshToken) {
+    throw new AppError("Invalid refresh token", 401);
+  }
+  return { userId, role };
 };
 
 export const getMe = async (userId: string) => {

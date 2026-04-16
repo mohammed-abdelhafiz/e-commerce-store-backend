@@ -16,6 +16,10 @@ export const registerSchema = z.object({
       /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
       "Password must contain at least one special character"
     ),
+  confirmPassword: z.string().min(6, "Password must be at least 6 characters long"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
 export const loginSchema = z.object({

@@ -8,7 +8,7 @@ export const protect = async (
   res: Response,
   next: NextFunction
 ) => {
-  const accessToken = req.cookies.accessToken;
+  const accessToken = req.cookies.access_token;
   if (!accessToken) {
     throw new AppError("Unauthorized", 401);
   }

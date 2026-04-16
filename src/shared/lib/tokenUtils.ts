@@ -55,13 +55,13 @@ export const setTokensInCookies = (
   accessToken: string,
   refreshToken: string
 ) => {
-  res.cookie("accessToken", accessToken, {
+  res.cookie("access_token", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
-  res.cookie("refreshToken", refreshToken, {
+  res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
@@ -71,6 +71,6 @@ export const setTokensInCookies = (
 
 
 export const clearTokensCookies = (res: Response) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+  res.clearCookie("access_token");
+  res.clearCookie("refresh_token");
 };

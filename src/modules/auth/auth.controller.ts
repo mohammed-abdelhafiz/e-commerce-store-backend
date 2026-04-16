@@ -30,7 +30,7 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
+  const refreshToken = req.cookies.refresh_token;
   if (!refreshToken) {
     throw new AppError("No refresh token found", 401);
   }
@@ -42,7 +42,7 @@ export const logout = async (req: Request, res: Response) => {
 };
 
 export const refreshToken = async (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
+  const refreshToken = req.cookies.refresh_token;
   if (!refreshToken) {
     throw new AppError("No refresh token provided", 401);
   }
@@ -51,6 +51,18 @@ export const refreshToken = async (req: Request, res: Response) => {
   setTokensInCookies(res, newAccessToken, newRefreshToken);
   res.status(200).json({
     message: "Tokens refreshed successfully",
+  });
+};
+
+export const getSession = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refresh_token;
+  if (!refreshToken) {
+    throw new AppError("No refresh token provided", 401);
+  }
+  const session = await authService.getSession(refreshToken);
+  res.status(200).json({
+    message: "Session fetched successfully",
+    session,
   });
 };
 
