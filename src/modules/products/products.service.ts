@@ -3,8 +3,7 @@ import { AppError } from "../../shared/lib/AppErrorClass";
 import Product, { ProductDocument, ProductImage } from "./Product.model";
 import { CreateProductDto, UpdateProductDto } from "./types/products.dto";
 
-export const getAllProducts = async (page: number, limit: number) => {
-  const skip = (page - 1) * limit;
+export const getAllProducts = async (skip: number, limit: number) => {
   return await Product.find().skip(skip).limit(limit);
 };
 
@@ -34,7 +33,10 @@ export const createProduct = async (
   product: CreateProductDto & { image: ProductImage }
 ) => {
   await redisClient.del("featured_products");
-  return await Product.create(product);
+  return await Product.create({
+    ...product,
+    price: Number(product.price),
+  });
 };
 
 export const updateProduct = async (

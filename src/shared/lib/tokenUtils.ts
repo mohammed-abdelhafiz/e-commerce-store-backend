@@ -55,6 +55,7 @@ export const setTokensInCookies = (
   accessToken: string,
   refreshToken: string
 ) => {
+  clearTokensCookies(res);
   res.cookie("access_token", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

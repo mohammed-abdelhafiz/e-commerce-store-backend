@@ -10,11 +10,21 @@ import {
 
 export const getAllProducts = async (req: Request, res: Response) => {
   const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 10;
-  const products = await productsService.getAllProducts(page, limit);
+  const limit = Number(req.query.limit) || 5;
+  const skip = (page - 1) * limit;
+
+  // Fetch limit + 1 to check if there's a next page
+  const products = await productsService.getAllProducts(skip, limit + 1);
+  const hasMore = products.length > limit;
+  const nextPage = hasMore ? page + 1 : undefined;
+  
+  // Return only the requested number of products
+  const productsToReturn = hasMore ? products.slice(0, limit) : products;
+
   res.status(200).json({
     message: "Products fetched successfully",
-    products,
+    products: productsToReturn,
+    nextPage,
   });
 };
 
