@@ -4,6 +4,8 @@ import { protect } from "../auth/middlewares/protect";
 
 const router = Router();
 
-router.get("/:code", protect, couponController.getValidCouponByCode);
+router.get("/my-coupon", protect, couponController.getMyCoupon);
+
+router.post("/validate/:code", protect, couponController.validateCoupon);
 
 export default router;
