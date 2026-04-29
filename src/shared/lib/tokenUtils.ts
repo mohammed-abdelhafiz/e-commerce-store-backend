@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import redisClient from "./redis";
-import { Response } from "express";
+import { CookieOptions, Response } from "express";
 import { Role } from "../types";
 
 export interface JwtPayload {
@@ -27,11 +27,17 @@ export const generateTokens = (userId: string, role: Role) => {
 };
 
 export const verifyAccessToken = (token: string) => {
-  return jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as unknown as JwtPayload;
+  return jwt.verify(
+    token,
+    process.env.JWT_ACCESS_SECRET!
+  ) as unknown as JwtPayload;
 };
 
 export const verifyRefreshToken = (token: string) => {
-  return jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as unknown as JwtPayload;
+  return jwt.verify(
+    token,
+    process.env.JWT_REFRESH_SECRET!
+  ) as unknown as JwtPayload;
 };
 
 export const storeRefreshTokenInRedis = async (
@@ -55,21 +61,22 @@ export const setTokensInCookies = (
   accessToken: string,
   refreshToken: string
 ) => {
-  clearTokensCookies(res);
-  res.cookie("access_token", accessToken, {
+  const cookieOptions: CookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
+  };
+
+  clearTokensCookies(res);
+  res.cookie("access_token", accessToken, {
+    ...cookieOptions,
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
   res.cookie("refresh_token", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    ...cookieOptions,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 };
-
 
 export const clearTokensCookies = (res: Response) => {
   res.clearCookie("access_token");

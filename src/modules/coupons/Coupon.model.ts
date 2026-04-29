@@ -1,42 +1,47 @@
-import { Document, Schema, Types, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
-interface CouponDocument extends Document {
-    code: string;
-    discountPercentage: number;
-    expiresAt: Date;
-    isActive: boolean;
-    user: Types.ObjectId;
-}
-
-const couponSchema = new Schema<CouponDocument>({
+const couponSchema = new Schema(
+  {
     code: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      required: true,
+      uppercase: true,
+      trim: true,
     },
     discountPercentage: {
-        type: Number,
-        required: true,
-        min: 0,
-        max: 100,
+      type: Number,
+      required: true,
+      min: 1,
+      max: 99,
     },
     expiresAt: {
-        type: Date,
-        required: true,
+      type: Date,
+      required: true,
     },
     isActive: {
-        type: Boolean,
-        default: true,
+      type: Boolean,
+      default: true,
     },
     user: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-        unique: true,
+      type: Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    
-}, { timestamps: true });
+    stripeCouponId: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const Coupon = model<CouponDocument>("Coupon", couponSchema);
+couponSchema.index({ code: 1 }, { unique: true });
+couponSchema.index({ user: 1 });
+// Ensure only one active coupon per user
+couponSchema.index(
+  { user: 1, isActive: 1 },
+  { unique: true, partialFilterExpression: { isActive: true } }
+);
 
+const Coupon = model("Coupon", couponSchema);
 export default Coupon;

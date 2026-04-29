@@ -26,17 +26,10 @@ export const addToCart = async (
 };
 export const getCart = async (userId: Types.ObjectId) => {
   const cart = await Cart.findOne({ user: userId }).populate("items.product");
-
-  if (!cart) {
-    throw new AppError("Cart not found", 404);
-  }
   return cart;
 };
 export const clearCart = async (userId: Types.ObjectId) => {
-  const cart = await Cart.findByIdAndDelete(userId);
-  if (!cart) {
-    throw new AppError("Cart not found", 404);
-  }
+  const cart = await Cart.findOneAndDelete({ user: userId });
   return cart;
 };
 export const removeProductFromCart = async (

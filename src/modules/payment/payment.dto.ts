@@ -4,15 +4,14 @@ export const createCheckoutSessionSchema = z.object({
   items: z
     .array(
       z.object({
-        _id: z.string(),
-        name: z.string(),
-        price: z.number(),
-        image: z.string(),
-        quantity: z.number(),
+        productId: z.string(),
+        quantity: z.number().int().positive(),
       })
     )
-    .length(1, "At least one item is required"),
+    .min(1, "At least one item is required"),
   couponCode: z.string().optional(),
 });
 
-export type CreateCheckoutSessionDto = z.infer<typeof createCheckoutSessionSchema>;
+export type CreateCheckoutSessionDto = z.infer<
+  typeof createCheckoutSessionSchema
+>;

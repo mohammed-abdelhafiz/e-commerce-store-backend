@@ -1,13 +1,20 @@
 import * as z from "zod";
 
 export const createProductSchema = z.object({
-  name: z.string().min(3).max(30),
-  description: z.string().min(3).max(1000),
+  name: z
+    .string()
+    .min(3, "Name must be at least 3 characters long")
+    .max(30, "Name must be at most 30 characters long"),
+  description: z
+    .string()
+    .min(3, "Description must be at least 3 characters long")
+    .max(1000, "Description must be at most 1000 characters long"),
   price: z
     .number()
     .min(0, "Price must be at least 0")
     .or(z.string())
-    .refine((val) => Number(val) >= 0, "Price must be at least 0"),
+    .transform((val) => Number(val))
+    .refine((val) => val >= 0, "Price must be at least 0"),
   category: z.enum([
     "Jeans",
     "T-shirts",

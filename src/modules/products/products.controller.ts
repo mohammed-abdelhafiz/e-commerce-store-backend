@@ -9,8 +9,8 @@ import {
 } from "../../shared/lib/cloudinary";
 
 export const getAllProducts = async (req: Request, res: Response) => {
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 5;
+  const page = Math.max(1, Number(req.query.page) || 1);
+  const limit = Math.max(1, Number(req.query.limit) || 5);
   const skip = (page - 1) * limit;
 
   // Fetch limit + 1 to check if there's a next page
@@ -136,8 +136,8 @@ export const getRecommendedProducts = async (req: Request, res: Response) => {
 
 export const getProductsByCategory = async (req: Request, res: Response) => {
   const category = req.params.category as string;
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 10;
+  const page = Math.max(1, Number(req.query.page) || 1);
+  const limit = Math.max(1, Number(req.query.limit) || 10);
   const products = await productsService.getProductsByCategory({
     category,
     page,

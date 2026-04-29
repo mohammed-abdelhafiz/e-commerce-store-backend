@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Document, Schema, model } from "mongoose";
 
 export interface ProductImage {
   public_id: string;
@@ -27,7 +27,7 @@ const productSchema = new Schema<ProductDocument>(
     price: {
       type: Number,
       required: true,
-      min: 0,
+      min: 1,
     },
     image: {
       type: {
@@ -38,6 +38,16 @@ const productSchema = new Schema<ProductDocument>(
     },
     category: {
       type: String,
+      enum: [
+        "Jeans",
+        "T-shirts",
+        "Shoes",
+        "Glasses",
+        "Jackets",
+        "Suits",
+        "Bags",
+        "other",
+      ],
       required: true,
     },
     isFeatured: {

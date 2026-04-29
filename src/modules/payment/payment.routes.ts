@@ -10,8 +10,8 @@ router.post(
   paymentController.createCheckoutSession
 );
 
-router.get(
-  "/checkout-success",
+router.post(
+  "/success-checkout",
   protect,
   paymentController.handleCheckoutSuccess
 );

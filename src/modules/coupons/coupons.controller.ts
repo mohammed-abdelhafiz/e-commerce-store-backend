@@ -10,6 +10,6 @@ export const getMyCoupon = async (req: Request, res: Response) => {
 export const validateCoupon = async (req: Request, res: Response) => {
   const userId = req.user!._id.toString();
   const code = req.params.code as string;
-  const coupon = await couponsService.validateCoupon(userId, code);
+  const coupon = await couponsService.validateCoupon(code, userId);
   res.status(200).json({ coupon });
 };
