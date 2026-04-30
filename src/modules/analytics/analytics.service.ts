@@ -7,6 +7,9 @@ export const getAnalytics = async () => {
   const totalProducts = await Product.countDocuments();
   const salesData = await Order.aggregate([
     {
+      $match: { status: "paid" },
+    },
+    {
       $group: {
         _id: null, // Group all documents together
         totalSales: { $sum: 1 }, // Count the number of orders
@@ -20,10 +23,13 @@ export const getAnalytics = async () => {
   };
 
   const endDate = new Date();
-  const startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000); // Last 7 days
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - 6);
+  startDate.setHours(0, 0, 0, 0); // Start from the beginning of the day 6 days ago
   const recentSalesData = await Order.aggregate([
     {
       $match: {
+        status: "paid",
         createdAt: { $gte: startDate, $lte: endDate },
       },
     },
